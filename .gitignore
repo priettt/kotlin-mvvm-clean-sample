@@ -1,12 +1,20 @@
+/captures
+.externalNativeBuild
+
+gradle.properties
+
 # Built application files
 *.apk
 *.ap_
 
-# Files for the ART/Dalvik VM
+# Files for the Dalvik VM
 *.dex
 
 # Java class files
 *.class
+
+# Make files
+*.mk
 
 # Generated files
 bin/
@@ -15,7 +23,10 @@ out/
 
 # Gradle files
 .gradle/
+gradlew.bat
+gradlew
 build/
+gradle.properties
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -32,34 +43,23 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# IntelliJ
-*.iml
-.idea/workspace.xml
+# Android Studio & IntelliJ
+*.iws
+.idea/
 .idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
+.idea/workspace.xml
 .idea/libraries
-.idea/caches
+*.iml
 
 # Keystore files
-# Uncomment the following line if you do not want to check your keystore files in.
-#*.jks
+*.jks
 
-# External native build folder generated in Android Studio 2.2 and later
-.externalNativeBuild
+# OS
+.DS_Store
+.navigation/
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
+### Android Patch ###
+gen-external-apklibs
 
-# Freeline
-freeline.py
-freeline/
-freeline_project_description.json
-
-# fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-fastlane/readme.md
+# Thumbnails
+._*
