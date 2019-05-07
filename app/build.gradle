@@ -35,5 +35,4 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:2.0.0-GA"
     implementation project(path: ':di')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
-
 }
