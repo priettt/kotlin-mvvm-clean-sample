@@ -4,17 +4,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.globant.mvvm.viewModels.CharacterViewModel
-import com.globant.di.useCaseModule
+import com.globant.di.useCasesModule
+import com.globant.di.viewModelsModule
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.mvvm.Data
 import com.globant.mvvm.Status
+import com.globant.mvvm.viewModels.CharacterViewModel
 import com.globant.myapplication.R
-import kotlinx.android.synthetic.main.activity_main.buttonSearch
-import kotlinx.android.synthetic.main.activity_main.characterID
-import kotlinx.android.synthetic.main.activity_main.progress
-import kotlinx.android.synthetic.main.activity_main.textViewDetails
-import org.koin.android.ext.koin.androidLogger
+import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.context.startKoin
 
@@ -27,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         startKoin {
-            modules(useCaseModule)
+            modules(listOf(useCasesModule, viewModelsModule))
         }
 
         viewModel.mainState.observe(::getLifecycle, ::updateUI)
@@ -55,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun showProgress() {
         progress.visibility = View.VISIBLE
         textViewDetails.visibility = View.GONE
@@ -69,7 +65,6 @@ class MainActivity : AppCompatActivity() {
     private fun setCharacter(character: MarvelCharacter) {
         textViewDetails.text = character.description
     }
-
 
     private fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()

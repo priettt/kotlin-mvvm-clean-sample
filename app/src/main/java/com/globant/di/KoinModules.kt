@@ -6,7 +6,12 @@ import com.globant.mvvm.viewModels.CharacterViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val useCaseModule = module {
+val useCasesModule = module {
     single<MarvelCharacterRepositoryContract> { MarvelCharacterRepository() }
+}
+
+val viewModelsModule= module {
     viewModel { CharacterViewModel() }
 }
+
+
