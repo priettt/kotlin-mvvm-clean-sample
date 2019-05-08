@@ -1,22 +1,16 @@
 package com.globant.mvvm
 
 import androidx.lifecycle.ViewModel
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 
-open class BaseViewModel : ViewModel() {
+open class BaseViewModel(private val job: CompletableJob, dispatcher: CoroutineDispatcher) : ViewModel() {
 
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-
-    protected fun addDisposable(disposable: Disposable) {
-        compositeDisposable.add(disposable)
-    }
-
-    private fun clearDisposables() {
-        compositeDisposable.clear()
-    }
+    val viewModelCoroutineScope = CoroutineScope(job + dispatcher)
 
     override fun onCleared() {
-        clearDisposables()
+        super.onCleared()
+        job.cancel()
     }
 }

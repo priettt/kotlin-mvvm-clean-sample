@@ -1,17 +1,20 @@
 package com.globant.mvvm.viewModels
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.globant.data.FindCharacterImpl
 import com.globant.domain.entities.MarvelCharacter
+import com.globant.domain.usecases.GetCharacterByIdUseCase
+import com.globant.domain.utils.Result
 import com.globant.mvvm.BaseViewModel
 import com.globant.mvvm.Data
 import com.globant.mvvm.Status
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
-class CharacterViewModel(private val marvelRepo: FindCharacterImpl) : BaseViewModel() {
+class CharacterViewModel : BaseViewModel(SupervisorJob(), Dispatchers.Default) {
+
+    val getCharacterById = GetCharacterByIdUseCase()
 
     private var _mainState: MutableLiveData<Data<MarvelCharacter>> = MutableLiveData()
     val mainState: LiveData<Data<MarvelCharacter>>
@@ -19,21 +22,18 @@ class CharacterViewModel(private val marvelRepo: FindCharacterImpl) : BaseViewMo
             return _mainState
         }
 
-    @SuppressLint("CheckResult")
     fun onSearchClicked(id: Int) {
         _mainState.value = Data(responseType = Status.LOADING)
-        marvelRepo.getCharacterById(id)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ character ->
-                if (character == null) {
-                    _mainState.value = Data(responseType = Status.ERROR)
-                } else {
-                    _mainState.value = Data(responseType = Status.SUCCESSFUL, data = character)
+        viewModelCoroutineScope.launch {
+            when (val result = getCharacterById(id)) {
+                is Result.Failure -> {
+                    _mainState.value = Data(responseType = Status.ERROR, error = result.exception)
                 }
-            }, { e ->
-                _mainState.value = Data(responseType = Status.ERROR, error = e)
-            })
+                is Result.Success -> {
+                    _mainState.value = Data(responseType = Status.SUCCESSFUL, data = result.data)
+                }
+            }
+        }
     }
 }
 

@@ -2,4 +2,5 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation "org.koin:koin-androidx-viewmodel:2.0.0-GA"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.8"
 }

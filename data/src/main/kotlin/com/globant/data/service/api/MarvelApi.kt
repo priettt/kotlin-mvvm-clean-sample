@@ -1,8 +1,8 @@
-package com.globant.data.api
+package com.globant.data.service.api
 
-import com.globant.data.response.CharacterResponse
-import com.globant.data.response.DataBaseResponse
-import com.globant.data.response.MarvelBaseResponse
+import com.globant.data.service.response.CharacterResponse
+import com.globant.data.service.response.DataBaseResponse
+import com.globant.data.service.response.MarvelBaseResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
