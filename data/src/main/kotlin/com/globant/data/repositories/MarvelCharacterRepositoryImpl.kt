@@ -5,10 +5,10 @@ import com.globant.data.ZERO
 import com.globant.data.mapper.CharacterMapperService
 import com.globant.data.service.api.MarvelApi
 import com.globant.domain.entities.MarvelCharacter
-import com.globant.domain.repositories.MarvelCharacterRepositoryContract
+import com.globant.domain.repositories.MarvelCharacterRepository
 import com.globant.domain.utils.Result
 
-class MarvelCharacterRepository : MarvelCharacterRepositoryContract {
+class MarvelCharacterRepositoryImpl : MarvelCharacterRepository {
 
     private val api: MarvelResquestGenerator = MarvelResquestGenerator()
     private val mapper: CharacterMapperService = CharacterMapperService()

@@ -16,21 +16,21 @@ class CharacterViewModel : BaseViewModel(SupervisorJob(), Dispatchers.Default) {
 
     val getCharacterById = GetCharacterByIdUseCase()
 
-    private var _mainState: MutableLiveData<Data<MarvelCharacter>> = MutableLiveData()
+    private var mutableMainState: MutableLiveData<Data<MarvelCharacter>> = MutableLiveData()
     val mainState: LiveData<Data<MarvelCharacter>>
         get() {
-            return _mainState
+            return mutableMainState
         }
 
     fun onSearchClicked(id: Int) {
-        _mainState.value = Data(responseType = Status.LOADING)
+        mutableMainState.value = Data(responseType = Status.LOADING)
         viewModelCoroutineScope.launch {
             when (val result = getCharacterById(id)) {
                 is Result.Failure -> {
-                    _mainState.postValue(Data(responseType = Status.ERROR, error = result.exception))
+                    mutableMainState.postValue(Data(responseType = Status.ERROR, error = result.exception))
                 }
                 is Result.Success -> {
-                    _mainState.postValue(Data(responseType = Status.SUCCESSFUL, data = result.data))
+                    mutableMainState.postValue(Data(responseType = Status.SUCCESSFUL, data = result.data))
                 }
             }
         }
