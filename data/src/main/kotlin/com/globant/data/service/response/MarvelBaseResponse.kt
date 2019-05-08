@@ -1,4 +1,4 @@
-package com.globant.data.response
+package com.globant.data.service.response
 
 class MarvelBaseResponse<T>(
 
