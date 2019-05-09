@@ -1,13 +1,13 @@
-package com.globant.mvvm.viewModels
+package com.globant.ui.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.domain.usecases.GetCharacterByIdUseCase
 import com.globant.domain.utils.Result
-import com.globant.mvvm.BaseViewModel
-import com.globant.mvvm.Data
-import com.globant.mvvm.Status
+import com.globant.ui.utils.Data
+import com.globant.ui.utils.Status
+import com.globant.ui.viewmodels.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
