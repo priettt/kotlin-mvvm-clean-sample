@@ -1,4 +1,4 @@
-package com.globant.mvvm.activities
+package com.globant.ui.activities
 
 import android.os.Bundle
 import android.view.View
@@ -7,9 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.globant.di.useCasesModule
 import com.globant.di.viewModelsModule
 import com.globant.domain.entities.MarvelCharacter
-import com.globant.mvvm.Data
-import com.globant.mvvm.Status
-import com.globant.mvvm.viewModels.CharacterViewModel
+import com.globant.ui.utils.Data
+import com.globant.ui.utils.Status
+import com.globant.ui.viewmodels.CharacterViewModel
 import com.globant.myapplication.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
