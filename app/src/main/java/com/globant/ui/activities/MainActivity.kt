@@ -23,13 +23,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startKoin {
-            modules(listOf(useCasesModule, viewModelsModule))
-        }
-
         viewModel.mainState.observe(::getLifecycle, ::updateUI)
 
-        buttonSearch.setOnClickListener { onSearchClicked() }
+        buttonSearchRemote.setOnClickListener { onSearchRemoteClicked() }
+        buttonSearchLocal.setOnClickListener { onSearchLocalClicked() }
     }
 
     private fun updateUI(characterData: Data<MarvelCharacter>) {
@@ -70,7 +67,10 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    private fun onSearchClicked() {
-        viewModel.onSearchClicked(characterID.text.toString().toInt())
+    private fun onSearchRemoteClicked() {
+        viewModel.onSearchRemoteClicked(characterID.text.toString().toInt())
+    }
+    private fun onSearchLocalClicked() {
+        viewModel.onSearchLocalClicked(characterID.text.toString().toInt())
     }
 }
