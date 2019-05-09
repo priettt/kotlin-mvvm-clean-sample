@@ -7,5 +7,5 @@ import org.koin.core.inject
 class GetCharacterByIdUseCase: KoinComponent {
     private val marvelCharacterRepository: MarvelCharacterRepository by inject()
 
-    operator fun invoke(id: Int) = marvelCharacterRepository.getCharacterById(id)
+    operator fun invoke(id: Int, getFromRemote: Boolean) = marvelCharacterRepository.getCharacterById(id, getFromRemote)
 }
