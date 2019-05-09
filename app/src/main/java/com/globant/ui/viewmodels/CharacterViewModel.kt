@@ -27,20 +27,10 @@ class CharacterViewModel : BaseViewModel(SupervisorJob(), Dispatchers.Default) {
         viewModelCoroutineScope.launch {
             when (val result = getCharacterById(id)) {
                 is Result.Failure -> {
-                    mutableMainState.postValue(
-                        Data(
-                            responseType = Status.ERROR,
-                            error = result.exception
-                        )
-                    )
+                    mutableMainState.postValue(Data(responseType = Status.ERROR, error = result.exception))
                 }
                 is Result.Success -> {
-                    mutableMainState.postValue(
-                        Data(
-                            responseType = Status.SUCCESSFUL,
-                            data = result.data
-                        )
-                    )
+                    mutableMainState.postValue(Data(responseType = Status.SUCCESSFUL, data = result.data))
                 }
             }
         }
