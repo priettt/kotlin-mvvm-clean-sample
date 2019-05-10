@@ -12,10 +12,20 @@ class CharacterDatabase {
 
         fun getCharacterById(id: Int): Result<MarvelCharacter> {
             val mapper = CharacterMapperLocal()
-            val realm = Realm.getDefaultInstance()
-            val character = realm.where(MarvelCharacterRealm::class.java).equalTo("id", id).findFirst()
-            character?.let { return Result.Success(mapper.transform(character)) }
-            return Result.Failure(Exception("Character not found"))
+            Realm.getDefaultInstance().use {
+                val character = it.where(MarvelCharacterRealm::class.java).equalTo("id", id).findFirst()
+                character?.let { return Result.Success(mapper.transform(character)) }
+                return Result.Failure(Exception("Character not found"))
+            }
+        }
+
+        fun insertOrUpdateCharacter(character: MarvelCharacter) {
+            val mapperLocal = CharacterMapperLocal()
+            Realm.getDefaultInstance().use {
+                it.executeTransaction {
+                    it.insertOrUpdate( mapperLocal.transformToRepository(character))
+                }
+            }
         }
     }
 }
