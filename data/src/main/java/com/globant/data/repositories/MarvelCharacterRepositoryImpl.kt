@@ -1,12 +1,10 @@
 package com.globant.data.repositories
 
 import com.globant.data.database.CharacterDatabase
-import com.globant.data.mapper.CharacterMapperLocal
 import com.globant.data.service.CharacterService
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.domain.repositories.MarvelCharacterRepository
 import com.globant.domain.utils.Result
-import io.realm.Realm
 
 class MarvelCharacterRepositoryImpl : MarvelCharacterRepository {
 
