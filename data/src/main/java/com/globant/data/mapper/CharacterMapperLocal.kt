@@ -1,6 +1,6 @@
 package com.globant.data.mapper
 
-import com.globant.data.database.MarvelCharacterRealm
+import com.globant.data.database.entity.MarvelCharacterRealm
 import com.globant.domain.entities.MarvelCharacter
 
 class CharacterMapperLocal : BaseMapperRepository<MarvelCharacterRealm, MarvelCharacter> {

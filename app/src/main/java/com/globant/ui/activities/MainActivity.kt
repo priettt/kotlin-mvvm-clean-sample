@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.globant.di.useCasesModule
-import com.globant.di.viewModelsModule
+import com.globant.data.MINUS_ONE
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.ui.utils.Data
 import com.globant.ui.utils.Status
@@ -13,7 +12,6 @@ import com.globant.ui.viewmodels.CharacterViewModel
 import com.globant.myapplication.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.context.startKoin
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,9 +63,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSearchRemoteClicked() {
-        viewModel.onSearchRemoteClicked(characterID.text.toString().toInt())
+        val id = if (characterID.text.toString().isNotEmpty()) {
+            characterID.text.toString().toInt()
+        } else {
+            MINUS_ONE
+        }
+        viewModel.onSearchRemoteClicked(id)
     }
     private fun onSearchLocalClicked() {
-        viewModel.onSearchLocalClicked(characterID.text.toString().toInt())
+        val id = if (characterID.text.toString().isNotEmpty()) {
+            characterID.text.toString().toInt()
+        } else {
+            MINUS_ONE
+        }
+        viewModel.onSearchLocalClicked(id)
     }
 }

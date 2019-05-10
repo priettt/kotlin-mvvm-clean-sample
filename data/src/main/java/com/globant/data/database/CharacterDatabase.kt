@@ -1,5 +1,6 @@
 package com.globant.data.database
 
+import com.globant.data.database.entity.MarvelCharacterRealm
 import com.globant.data.mapper.CharacterMapperLocal
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.domain.utils.Result

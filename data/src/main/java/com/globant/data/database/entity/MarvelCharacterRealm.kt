@@ -1,10 +1,9 @@
-package com.globant.data.database
+package com.globant.data.database.entity
 
+import com.globant.data.EMPTY_STRING
+import com.globant.data.DEFAULT_ID
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-
-const val EMPTY_STRING = ""
-const val DEFAULT_ID = 0
 
 open class MarvelCharacterRealm(
         @PrimaryKey
