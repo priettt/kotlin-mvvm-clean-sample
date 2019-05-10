@@ -32,17 +32,14 @@ class MainActivity : AppCompatActivity() {
     private fun updateUI(characterData: Data<MarvelCharacter>) {
         when (characterData.responseType) {
             Status.ERROR -> {
-                //Error handling
                 hideProgress()
                 characterData.error?.message?.let { showMessage(it) }
                 characterData.data?.let { setCharacter(it) }
             }
             Status.LOADING -> {
-                //Progress
                 showProgress()
             }
             Status.SUCCESSFUL -> {
-                // On Successful response
                 hideProgress()
                 characterData.data?.let { setCharacter(it) }
             }
