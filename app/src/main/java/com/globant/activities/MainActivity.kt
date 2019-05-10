@@ -1,15 +1,15 @@
-package com.globant.ui.activities
+package com.globant.activities
 
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.globant.data.MINUS_ONE
 import com.globant.domain.entities.MarvelCharacter
-import com.globant.ui.utils.Data
-import com.globant.ui.utils.Status
-import com.globant.ui.viewmodels.CharacterViewModel
+import com.globant.utils.Data
+import com.globant.utils.Status
+import com.globant.viewmodels.CharacterViewModel
 import com.globant.myapplication.R
+import com.globant.utils.MINUS_ONE
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

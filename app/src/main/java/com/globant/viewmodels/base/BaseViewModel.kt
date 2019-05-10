@@ -1,4 +1,4 @@
-package com.globant.ui.viewmodels.base
+package com.globant.viewmodels.base
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CompletableJob

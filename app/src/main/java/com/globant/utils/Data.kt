@@ -1,4 +1,4 @@
-package com.globant.ui.utils
+package com.globant.utils
 
 /**
  * A generic wrapper class around data request
