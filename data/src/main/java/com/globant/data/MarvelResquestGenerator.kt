@@ -12,6 +12,8 @@ class MarvelResquestGenerator {
     private val PUBLIC_API_KEY_ARG = "apikey"
     private val TS = "ts"
     private val TS_VALUE = "1"
+    private val MAX_TRYOUTS = 3
+    private val INIT_TRYOUT = 1
     private val httpClient = OkHttpClient.Builder()
             .addInterceptor(
                     HttpLoggingInterceptor().apply {
@@ -37,13 +39,13 @@ class MarvelResquestGenerator {
             .addInterceptor { chain ->
                 var request = chain.request()
                 var response = chain.proceed(request)
-                var tryOuts = 1
+                var tryOuts = INIT_TRYOUT
 
-                while (!response.isSuccessful() && tryOuts < 3) {
+                while (!response.isSuccessful && tryOuts < MAX_TRYOUTS) {
                     Log.d(this@MarvelResquestGenerator.javaClass.simpleName, "intercept: timeout/connection failure, " +
                             "performing automatic retry ${(tryOuts + 1)}")
                     tryOuts++
-                    response = chain.proceed(request);
+                    response = chain.proceed(request)
                 }
 
                 response
