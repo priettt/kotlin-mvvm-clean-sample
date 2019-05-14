@@ -1,16 +1,18 @@
 package com.globant.viewmodels.base
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel(private val job: CompletableJob, dispatcher: CoroutineDispatcher) : ViewModel() {
-
-    val viewModelCoroutineScope = CoroutineScope(job + dispatcher)
+open class BaseViewModel : ViewModel(), CoroutineScope {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + SupervisorJob()
 
     override fun onCleared() {
         super.onCleared()
-        job.cancel()
+        coroutineContext.cancel()
     }
 }
