@@ -9,12 +9,10 @@ import com.globant.utils.Data
 import com.globant.utils.Status
 import com.globant.viewmodels.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class CharacterViewModel : BaseViewModel(SupervisorJob(), Dispatchers.Default) {
-
-    val getCharacterById = GetCharacterByIdUseCase()
+class CharacterViewModel(val getCharacterById: GetCharacterByIdUseCase) : BaseViewModel() {
 
     private var mutableMainState: MutableLiveData<Data<MarvelCharacter>> = MutableLiveData()
     val mainState: LiveData<Data<MarvelCharacter>>
@@ -22,29 +20,27 @@ class CharacterViewModel : BaseViewModel(SupervisorJob(), Dispatchers.Default) {
             return mutableMainState
         }
 
-    fun onSearchRemoteClicked(id: Int) {
+    fun onSearchRemoteClicked(id: Int) = launch {
         mutableMainState.value = Data(responseType = Status.LOADING)
-        viewModelCoroutineScope.launch {
-            when (val result = getCharacterById(id, true)) {
-                is Result.Failure -> {
-                    mutableMainState.postValue(Data(responseType = Status.ERROR, error = result.exception))
-                }
-                is Result.Success -> {
-                    mutableMainState.postValue(Data(responseType = Status.SUCCESSFUL, data = result.data))
-                }
+        when (val result = withContext(Dispatchers.IO) { getCharacterById(id, true) }) {
+            is Result.Failure -> {
+                mutableMainState.value = Data(responseType = Status.ERROR, error = result.exception)
+            }
+            is Result.Success -> {
+                mutableMainState.value = Data(responseType = Status.SUCCESSFUL, data = result.data)
             }
         }
     }
 
-    fun onSearchLocalClicked(id: Int){
+    fun onSearchLocalClicked(id: Int) = launch {
         mutableMainState.value = Data(responseType = Status.LOADING)
-        viewModelCoroutineScope.launch {
-            when (val result = getCharacterById(id, false)) {
+        launch {
+            when (val result = withContext(Dispatchers.IO) { getCharacterById(id, false) }) {
                 is Result.Failure -> {
-                    mutableMainState.postValue(Data(responseType = Status.ERROR, error = result.exception))
+                    mutableMainState.value = Data(responseType = Status.ERROR, error = result.exception)
                 }
                 is Result.Success -> {
-                    mutableMainState.postValue(Data(responseType = Status.SUCCESSFUL, data = result.data))
+                    mutableMainState.value = Data(responseType = Status.SUCCESSFUL, data = result.data)
                 }
             }
         }

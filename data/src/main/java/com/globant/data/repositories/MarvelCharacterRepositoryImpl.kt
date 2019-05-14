@@ -9,20 +9,19 @@ import com.globant.domain.utils.Result
 class MarvelCharacterRepositoryImpl : MarvelCharacterRepository {
 
     override fun getCharacterById(id: Int, getFromRemote: Boolean): Result<MarvelCharacter> {
-        if (getFromRemote) {
-            val marvelCharacterResult: Result<MarvelCharacter> = CharacterService.getCharacterById(id)
+        return if (getFromRemote) {
 
-            when (marvelCharacterResult) {
+            when (val marvelCharacterResult: Result<MarvelCharacter> = CharacterService.getCharacterById(id)) {
                 is Result.Failure -> {
-                    return marvelCharacterResult
+                    marvelCharacterResult
                 }
                 is Result.Success -> {
                     insertOrUpdateCharacter(marvelCharacterResult.data)
-                    return marvelCharacterResult
+                    marvelCharacterResult
                 }
             }
         } else {
-            return CharacterDatabase.getCharacterById(id)
+            CharacterDatabase.getCharacterById(id)
         }
     }
 
