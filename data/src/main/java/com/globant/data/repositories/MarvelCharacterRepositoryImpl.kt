@@ -15,7 +15,7 @@ class MarvelCharacterRepositoryImpl(
         if (getFromRemote) {
             val marvelCharacterResult = characterService.getCharacterById(id)
             if (marvelCharacterResult is Result.Success) {
-                insertOrUpdateCharacter(marvelCharacterResult.data)
+                // insertOrUpdateCharacter(marvelCharacterResult.data)
             }
             marvelCharacterResult
         } else {
