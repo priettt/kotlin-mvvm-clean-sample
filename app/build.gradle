@@ -59,5 +59,6 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1'
 
 }

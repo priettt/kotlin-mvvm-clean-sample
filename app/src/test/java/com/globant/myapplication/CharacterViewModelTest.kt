@@ -8,8 +8,6 @@ import com.globant.di.viewModelsModule
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.domain.usecases.GetCharacterByIdUseCase
 import com.globant.domain.utils.Result
-import com.globant.myapplication.util.captureValues
-import com.globant.myapplication.util.getValueForTest
 import com.globant.repositoriesModule
 import com.globant.utils.Data
 import com.globant.utils.Status
@@ -17,8 +15,11 @@ import com.globant.viewmodels.CharacterViewModel
 import com.google.common.truth.Truth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -37,90 +38,65 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
 
     companion object {
         const val VALID_ID = 1017100
-        @ObsoleteCoroutinesApi
-        private val mainThreadSurrogate = newSingleThreadContext("UI thread")
-
+        const val INVALID_ID = -1
     }
+
+    @UseExperimental(ObsoleteCoroutinesApi::class)
+    private var mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    @get:Rule
-    val mockitoRule = MockitoJUnit.rule()
-
     lateinit var subject: CharacterViewModel
-    @Mock lateinit var marvelCharacterResult: Result.Success<MarvelCharacter>
+    @Mock lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
+    @Mock lateinit var marvelCharacterInvalidResult: Result.Failure
     @Mock lateinit var marvelCharacter: MarvelCharacter
 
-    val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
+    private val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
 
     @Before
     fun setup() {
-        Dispatchers.Main = mainThreadSurrogate
+        Dispatchers.setMain(mainThreadSurrogate)
         startKoin {
-            modules(listOf(useCasesModule, viewModelsModule, repositoriesModule))
+            modules(listOf(useCasesModule))
         }
 
         declareMock<GetCharacterByIdUseCase>()
         MockitoAnnotations.initMocks(this)
+        subject = CharacterViewModel(getCharacterByIdUseCase)
     }
 
     @After
     fun after() {
         stopKoin()
-        // Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
         mainThreadSurrogate.close()
+        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
     }
 
     @Test
-    fun onSeatchRemoteTest() {
-        subject = CharacterViewModel(getCharacterByIdUseCase)
+    fun onSearchRemoteTestSuccessful() {
         val liveDataUnderTest = subject.mainState.testObserver()
+        whenever(getCharacterByIdUseCase.invoke(VALID_ID,true)).thenReturn(marvelCharacterValidResult)
+        whenever(marvelCharacterValidResult.data).thenReturn(marvelCharacter)
 
-        runBlocking {
-            whenever(getCharacterByIdUseCase.invoke(VALID_ID,true)).thenReturn(marvelCharacterResult)
-            subject.onSearchRemoteClicked(VALID_ID)
-        }
+        subject.onSearchRemoteClicked(VALID_ID)
 
-        Truth.assert_()
-                .that(liveDataUnderTest.observedValues)
+        Truth.assertThat(liveDataUnderTest.observedValues)
                 .isEqualTo(listOf(Data(Status.LOADING), Data(Status.SUCCESSFUL, data = marvelCharacter)))
     }
 
     @Test
-    fun `init method sets liveData value to empty list`() {
+    fun onSearchRemoteTestError() {
         val liveDataUnderTest = subject.mainState.testObserver()
+        whenever(getCharacterByIdUseCase.invoke(INVALID_ID,true)).thenReturn(marvelCharacterInvalidResult)
+        whenever(marvelCharacterInvalidResult.exception).thenReturn(null)
 
-        Truth.assert_()
-                .that(liveDataUnderTest.observedValues)
-                .isEqualTo(emptyList<String>())
+        subject.onSearchRemoteClicked(INVALID_ID)
+
+        Truth.assertThat(liveDataUnderTest.observedValues)
+                .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null)))
     }
 
-    @Test
-    fun `on remote search set correct screen states`() {
-        declareMock<GetCharacterByIdUseCase> {
-            whenever(getCharacterByIdUseCase.invoke(VALID_ID, true)).thenReturn(marvelCharacterResult)
-        }
-        val liveDataUnderTest = subject.mainState.testObserver()
-        runBlocking {
-            subject.onSearchRemoteClicked(VALID_ID)
-            Truth.assert_()
-                    .that(liveDataUnderTest.observedValues)
-                    .isEqualTo(listOf(Data(Status.LOADING), Data(Status.SUCCESSFUL, data = marvelCharacter)))
-        }
-
-    }
-
-    @Test
-    fun `Display after search remote`() {
-
-        subject.mainState.captureValues {
-            runBlocking {
-                subject.onSearchRemoteClicked(VALID_ID)
-            }
-            subject.mainState.getValueForTest()?.responseType?.equals(Status.LOADING)?.let { assert(it) }
-        }
-    }
 
     class TestObserver<T> : Observer<T> {
         val observedValues = mutableListOf<T?>()
