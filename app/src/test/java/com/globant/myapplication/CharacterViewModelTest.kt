@@ -11,10 +11,7 @@ import com.globant.utils.Data
 import com.globant.utils.Status
 import com.globant.viewmodels.CharacterViewModel
 import com.google.common.truth.Truth
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -30,30 +27,26 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
+private const val VALID_ID = 1017100
+private const val INVALID_ID = -1
+
 class CharacterViewModelTest : AutoCloseKoinTest() {
 
-    companion object {
-        const val VALID_ID = 1017100
-        const val INVALID_ID = -1
-    }
-
-    @UseExperimental(ObsoleteCoroutinesApi::class)
+    @ObsoleteCoroutinesApi
     private var mainThreadSurrogate = newSingleThreadContext("UI thread")
-
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     lateinit var subject: CharacterViewModel
-    @Mock
-    lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
-    @Mock
-    lateinit var marvelCharacterInvalidResult: Result.Failure
-    @Mock
-    lateinit var marvelCharacter: MarvelCharacter
+    @Mock lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
+    @Mock lateinit var marvelCharacterInvalidResult: Result.Failure
+    @Mock lateinit var marvelCharacter: MarvelCharacter
 
     private val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
 
+    @ExperimentalCoroutinesApi
+    @ObsoleteCoroutinesApi
     @Before
     fun setup() {
         Dispatchers.setMain(mainThreadSurrogate)
@@ -66,6 +59,8 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
         subject = CharacterViewModel(getCharacterByIdUseCase)
     }
 
+    @ExperimentalCoroutinesApi
+    @ObsoleteCoroutinesApi
     @After
     fun after() {
         stopKoin()
@@ -82,7 +77,7 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
             subject.onSearchRemoteClicked(VALID_ID).join()
         }
         Truth.assertThat(liveDataUnderTest.observedValues)
-                .isEqualTo(listOf(Data(Status.LOADING), Data(Status.SUCCESSFUL, data = marvelCharacter)))
+            .isEqualTo(listOf(Data(Status.LOADING), Data(Status.SUCCESSFUL, data = marvelCharacter)))
 
     }
 
@@ -97,7 +92,7 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
         }
 
         Truth.assertThat(liveDataUnderTest.observedValues)
-                .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null)))
+            .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null)))
     }
 
     class TestObserver<T> : Observer<T> {
