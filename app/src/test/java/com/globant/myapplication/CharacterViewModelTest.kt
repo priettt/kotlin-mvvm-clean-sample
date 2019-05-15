@@ -4,18 +4,15 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.globant.di.useCasesModule
-import com.globant.di.viewModelsModule
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.domain.usecases.GetCharacterByIdUseCase
 import com.globant.domain.utils.Result
-import com.globant.repositoriesModule
 import com.globant.utils.Data
 import com.globant.utils.Status
 import com.globant.viewmodels.CharacterViewModel
 import com.google.common.truth.Truth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
@@ -31,7 +28,6 @@ import org.koin.test.inject
 import org.koin.test.mock.declareMock
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnit
 import org.mockito.Mockito.`when` as whenever
 
 class CharacterViewModelTest : AutoCloseKoinTest() {
@@ -44,13 +40,17 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     @UseExperimental(ObsoleteCoroutinesApi::class)
     private var mainThreadSurrogate = newSingleThreadContext("UI thread")
 
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     lateinit var subject: CharacterViewModel
-    @Mock lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
-    @Mock lateinit var marvelCharacterInvalidResult: Result.Failure
-    @Mock lateinit var marvelCharacter: MarvelCharacter
+    @Mock
+    lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
+    @Mock
+    lateinit var marvelCharacterInvalidResult: Result.Failure
+    @Mock
+    lateinit var marvelCharacter: MarvelCharacter
 
     private val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
 
@@ -70,33 +70,35 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     fun after() {
         stopKoin()
         mainThreadSurrogate.close()
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
+        Dispatchers.resetMain()
     }
 
     @Test
     fun onSearchRemoteTestSuccessful() {
         val liveDataUnderTest = subject.mainState.testObserver()
-        whenever(getCharacterByIdUseCase.invoke(VALID_ID,true)).thenReturn(marvelCharacterValidResult)
+        whenever(getCharacterByIdUseCase.invoke(VALID_ID, true)).thenReturn(marvelCharacterValidResult)
         whenever(marvelCharacterValidResult.data).thenReturn(marvelCharacter)
-
-        subject.onSearchRemoteClicked(VALID_ID)
-
+        runBlocking {
+            subject.onSearchRemoteClicked(VALID_ID).join()
+        }
         Truth.assertThat(liveDataUnderTest.observedValues)
                 .isEqualTo(listOf(Data(Status.LOADING), Data(Status.SUCCESSFUL, data = marvelCharacter)))
+
     }
 
     @Test
     fun onSearchRemoteTestError() {
         val liveDataUnderTest = subject.mainState.testObserver()
-        whenever(getCharacterByIdUseCase.invoke(INVALID_ID,true)).thenReturn(marvelCharacterInvalidResult)
+        whenever(getCharacterByIdUseCase.invoke(INVALID_ID, true)).thenReturn(marvelCharacterInvalidResult)
         whenever(marvelCharacterInvalidResult.exception).thenReturn(null)
 
-        subject.onSearchRemoteClicked(INVALID_ID)
+        runBlocking {
+            subject.onSearchRemoteClicked(INVALID_ID).join()
+        }
 
         Truth.assertThat(liveDataUnderTest.observedValues)
                 .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null)))
     }
-
 
     class TestObserver<T> : Observer<T> {
         val observedValues = mutableListOf<T?>()

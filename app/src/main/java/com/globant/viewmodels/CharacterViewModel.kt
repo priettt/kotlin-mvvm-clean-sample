@@ -34,14 +34,12 @@ class CharacterViewModel(val getCharacterById: GetCharacterByIdUseCase) : BaseVi
 
     fun onSearchLocalClicked(id: Int) = launch {
         mutableMainState.value = Data(responseType = Status.LOADING)
-        launch {
-            when (val result = withContext(Dispatchers.IO) { getCharacterById(id, false) }) {
-                is Result.Failure -> {
-                    mutableMainState.value = Data(responseType = Status.ERROR, error = result.exception)
-                }
-                is Result.Success -> {
-                    mutableMainState.value = Data(responseType = Status.SUCCESSFUL, data = result.data)
-                }
+        when (val result = withContext(Dispatchers.IO) { getCharacterById(id, false) }) {
+            is Result.Failure -> {
+                mutableMainState.value = Data(responseType = Status.ERROR, error = result.exception)
+            }
+            is Result.Success -> {
+                mutableMainState.value = Data(responseType = Status.SUCCESSFUL, data = result.data)
             }
         }
     }
