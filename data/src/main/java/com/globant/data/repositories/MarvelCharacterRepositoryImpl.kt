@@ -7,20 +7,25 @@ import com.globant.domain.repositories.MarvelCharacterRepository
 import com.globant.domain.utils.Result
 
 class MarvelCharacterRepositoryImpl(
-    private val characterService: CharacterService,
-    private val characterDatabase: CharacterDatabase
+        private val characterService: CharacterService,
+        private val characterDatabase: CharacterDatabase
 ) : MarvelCharacterRepository {
 
-    override fun getCharacterById(id: Int, getFromRemote: Boolean): Result<MarvelCharacter> =
-        if (getFromRemote) {
+    override suspend fun getCharacterById(id: Int, getFromRemote: Boolean): Result<MarvelCharacter> {
+        return if (getFromRemote) {
             val marvelCharacterResult = characterService.getCharacterById(id)
+
             if (marvelCharacterResult is Result.Success) {
                 insertOrUpdateCharacter(marvelCharacterResult.data)
+                marvelCharacterResult
+            } else {
+                Result.Failure(Exception("Failure"))
             }
-            marvelCharacterResult
+
         } else {
             characterDatabase.getCharacterById(id)
         }
+    }
 
     private fun insertOrUpdateCharacter(character: MarvelCharacter) {
         characterDatabase.insertOrUpdateCharacter(character)
