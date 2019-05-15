@@ -25,6 +25,7 @@ import org.koin.test.inject
 import org.koin.test.mock.declareMock
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import java.lang.Exception
 import org.mockito.Mockito.`when` as whenever
 
 private const val VALID_ID = 1017100
@@ -42,6 +43,7 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     @Mock lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
     @Mock lateinit var marvelCharacterInvalidResult: Result.Failure
     @Mock lateinit var marvelCharacter: MarvelCharacter
+    @Mock lateinit var exception: Exception
 
     private val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
 
@@ -85,14 +87,42 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     fun onSearchRemoteTestError() {
         val liveDataUnderTest = subject.mainState.testObserver()
         whenever(getCharacterByIdUseCase.invoke(INVALID_ID, true)).thenReturn(marvelCharacterInvalidResult)
-        whenever(marvelCharacterInvalidResult.exception).thenReturn(null)
+        whenever(marvelCharacterInvalidResult.exception).thenReturn(exception)
 
         runBlocking {
             subject.onSearchRemoteClicked(INVALID_ID).join()
         }
 
         Truth.assertThat(liveDataUnderTest.observedValues)
-            .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null)))
+            .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null, error = exception)))
+    }
+
+    @Test
+    fun onSearchLocalSuccessful() {
+        val liveDataUnderTest = subject.mainState.testObserver()
+        whenever(getCharacterByIdUseCase.invoke(VALID_ID, false)).thenReturn(marvelCharacterValidResult)
+        whenever(marvelCharacterValidResult.data).thenReturn(marvelCharacter)
+
+        runBlocking {
+            subject.onSearchLocalClicked(VALID_ID).join()
+        }
+
+        Truth.assertThat(liveDataUnderTest.observedValues)
+                .isEqualTo(listOf(Data(Status.LOADING), Data(Status.SUCCESSFUL, data = marvelCharacter)))
+    }
+
+    @Test
+    fun onSearchLocalTestError() {
+        val liveDataUnderTest = subject.mainState.testObserver()
+        whenever(getCharacterByIdUseCase.invoke(INVALID_ID, true)).thenReturn(marvelCharacterInvalidResult)
+        whenever(marvelCharacterInvalidResult.exception).thenReturn(exception)
+
+        runBlocking {
+            subject.onSearchRemoteClicked(INVALID_ID).join()
+        }
+
+        Truth.assertThat(liveDataUnderTest.observedValues)
+                .isEqualTo(listOf(Data(Status.LOADING), Data(Status.ERROR, data = null, error = exception)))
     }
 
     class TestObserver<T> : Observer<T> {

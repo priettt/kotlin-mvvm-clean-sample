@@ -52,7 +52,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     testImplementation "com.google.truth:truth:0.42"
-    testImplementation 'org.mockito:mockito-core:2.25.1'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
     testImplementation 'org.koin:koin-test:2.0.0-GA'
 
     def lifecycle_version = '2.0.0-beta01'
