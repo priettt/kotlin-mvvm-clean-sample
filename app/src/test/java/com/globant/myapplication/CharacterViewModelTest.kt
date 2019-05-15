@@ -102,7 +102,7 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
         }
     }
 
-    fun <T> LiveData<T>.testObserver() = TestObserver<T>().also {
+    private fun <T> LiveData<T>.testObserver() = TestObserver<T>().also {
         observeForever(it)
     }
 
