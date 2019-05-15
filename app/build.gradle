@@ -51,12 +51,13 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
     testImplementation "com.google.truth:truth:0.42"
     testImplementation 'org.mockito:mockito-core:2.25.1'
     testImplementation 'org.koin:koin-test:2.0.0-GA'
 
     def lifecycle_version = '2.0.0-beta01'
     testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
 
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import com.globant.di.useCasesModule
 import com.globant.di.viewModelsModule
 import com.globant.domain.entities.MarvelCharacter
-import com.globant.domain.repositories.MarvelCharacterRepository
 import com.globant.domain.usecases.GetCharacterByIdUseCase
 import com.globant.domain.utils.Result
 import com.globant.myapplication.util.captureValues
@@ -17,6 +16,8 @@ import com.globant.utils.Status
 import com.globant.viewmodels.CharacterViewModel
 import com.google.common.truth.Truth
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -25,13 +26,9 @@ import org.junit.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.AutoCloseKoinTest
-import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.mock.declareMock
-import org.mockito.ArgumentMatchers
-import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnit
 import org.mockito.Mockito.`when` as whenever
@@ -40,6 +37,9 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
 
     companion object {
         const val VALID_ID = 1017100
+        @ObsoleteCoroutinesApi
+        private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+
     }
 
     @get:Rule
@@ -49,16 +49,18 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     val mockitoRule = MockitoJUnit.rule()
 
     lateinit var subject: CharacterViewModel
-
     @Mock lateinit var marvelCharacterResult: Result.Success<MarvelCharacter>
     @Mock lateinit var marvelCharacter: MarvelCharacter
+
     val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
 
     @Before
     fun setup() {
+        Dispatchers.Main = mainThreadSurrogate
         startKoin {
             modules(listOf(useCasesModule, viewModelsModule, repositoriesModule))
         }
+
         declareMock<GetCharacterByIdUseCase>()
         MockitoAnnotations.initMocks(this)
     }
@@ -66,6 +68,8 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     @After
     fun after() {
         stopKoin()
+        // Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
+        mainThreadSurrogate.close()
     }
 
     @Test
