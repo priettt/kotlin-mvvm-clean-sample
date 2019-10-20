@@ -1,68 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:layout_marginTop="16dp"
-    android:gravity="center"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/textViewDetails"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:text="@string/no_character" />
-
-    <LinearLayout
-        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/characterID"
+    <TextView
+            android:id="@+id/textViewDetails"
             android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:text="@string/no_character" />
+
+    <LinearLayout
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:autofillHints="password"
-            android:drawablePadding="8dp"
-            android:gravity="center_vertical"
-            android:hint="@string/input_charID"
-            android:inputType="number"
-            tools:targetApi="o" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+        <EditText
+                android:id="@+id/characterID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="password"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:hint="@string/input_charID"
+                android:inputType="number"
+                tools:targetApi="o" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/buttonSearchRemote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/btn_search_remote" />
+                    android:id="@+id/buttonSearchRemote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/btn_search_remote" />
 
             <Button
-                android:id="@+id/buttonSearchLocal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/btn_search_local" />
+                    android:id="@+id/buttonSearchLocal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/btn_search_local" />
 
         </LinearLayout>
 
         <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
     </LinearLayout>
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/example_id_text"
+            android:textAlignment="center"
+            android:textSize="@dimen/example_id_text_size" />
 
 </LinearLayout>
