@@ -35,16 +35,26 @@ android {
 
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':domain')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    def lib = rootProject.ext.generalDependencies
+    implementation lib.appcompat
+
+    testImplementation lib.junit_version
+    androidTestImplementation lib.test_runner_version
+    androidTestImplementation lib.espresso_core_version
 
     // Retrofit & OkHttp
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation "com.squareup.okhttp3:logging-interceptor:3.9.0"
+    implementation lib.retrofit2
+    implementation lib.retrofitComverterGson
+    implementation lib.okhttp3LoggingInterceptor
+
+    debugImplementation lib.chucker
+    releaseImplementation lib.chuckerReleaseImplementation
 }

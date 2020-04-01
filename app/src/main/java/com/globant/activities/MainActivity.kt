@@ -9,6 +9,7 @@ import com.globant.utils.Data
 import com.globant.utils.Status
 import com.globant.viewmodels.CharacterViewModel
 import com.globant.myapplication.R
+import com.globant.utils.Event
 import com.globant.utils.MINUS_ONE
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -27,19 +28,21 @@ class MainActivity : AppCompatActivity() {
         buttonSearchLocal.setOnClickListener { onSearchLocalClicked() }
     }
 
-    private fun updateUI(characterData: Data<MarvelCharacter>) {
-        when (characterData.responseType) {
+    private fun updateUI(characterData: Event<Data<MarvelCharacter>>) {
+        // in this case, we need to use peekContent because we use this several times to update the UI
+        // in case that we will only use the characterData one time we have to use getContentIfNotHandled
+        when (characterData.peekContent().responseType) {
             Status.ERROR -> {
                 hideProgress()
-                characterData.error?.message?.let { showMessage(it) }
-                characterData.data?.let { setCharacter(it) }
+                characterData.peekContent().error?.message?.let { showMessage(it) }
+                textViewDetails.text = getString(R.string.no_character)
             }
             Status.LOADING -> {
                 showProgress()
             }
             Status.SUCCESSFUL -> {
                 hideProgress()
-                characterData.data?.let { setCharacter(it) }
+                characterData.peekContent().data?.let { setCharacter(it) }
             }
         }
     }

@@ -4,4 +4,5 @@
     <string name="btn_search_remote">Search remote</string>
     <string name="no_character">NO CHARACTER</string>
     <string name="btn_search_local">Search local</string>
+    <string name="example_id_text">You can use the ID 1017100 to test this app.</string>
 </resources>
