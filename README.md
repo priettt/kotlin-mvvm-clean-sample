@@ -120,3 +120,7 @@ Androidx also improves understanding of what is added to the app:
 
 * android.* -> bundled in the platform.
 * androidx.* -> extension library.
+
+### Chucker
+Chucker works as an inspection of HTTP(S) requests/responses in the App, providing a UI for inspecting and sharing their content when the user tap the push notification displayed.
+https://github.com/ChuckerTeam/chucker
