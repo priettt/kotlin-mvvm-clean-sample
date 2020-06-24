@@ -2,6 +2,8 @@
 
 This project was made with the objective of creating a base structure for new apps, using tools and components supported by Google and by most of the Android development community.
 
+## Documentation
+- [Globant PPT](https://docs.google.com/presentation/d/1Rd8bRY0gdokTTDeXBarfjJAGadJHjwWg_RZWx1idbT0/edit?usp=sharing)
 
 ## Clean Architecture
 
