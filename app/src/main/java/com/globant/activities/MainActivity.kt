@@ -5,27 +5,29 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.globant.domain.entities.MarvelCharacter
-import com.globant.utils.Data
-import com.globant.utils.Status
-import com.globant.viewmodels.CharacterViewModel
 import com.globant.myapplication.R
+import com.globant.myapplication.databinding.ActivityMainBinding
+import com.globant.utils.Data
 import com.globant.utils.Event
 import com.globant.utils.MINUS_ONE
-import kotlinx.android.synthetic.main.activity_main.*
+import com.globant.utils.Status
+import com.globant.viewmodels.CharacterViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModel<CharacterViewModel>()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        viewModel.mainState.observe(::getLifecycle, ::updateUI)
+        viewModel.mainState.observe(this, ::updateUI)
 
-        buttonSearchRemote.setOnClickListener { onSearchRemoteClicked() }
-        buttonSearchLocal.setOnClickListener { onSearchLocalClicked() }
+        binding.buttonSearchRemote.setOnClickListener { onSearchRemoteClicked() }
+        binding.buttonSearchLocal.setOnClickListener { onSearchLocalClicked() }
+        setContentView(binding.root)
     }
 
     private fun updateUI(characterData: Event<Data<MarvelCharacter>>) {
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             Status.ERROR -> {
                 hideProgress()
                 characterData.peekContent().error?.message?.let { showMessage(it) }
-                textViewDetails.text = getString(R.string.no_character)
+                binding.textViewDetails.text = getString(R.string.no_character)
             }
             Status.LOADING -> {
                 showProgress()
@@ -48,17 +50,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProgress() {
-        progress.visibility = View.VISIBLE
-        textViewDetails.visibility = View.GONE
+        binding.progress.visibility = View.VISIBLE
+        binding.textViewDetails.visibility = View.GONE
     }
 
     private fun hideProgress() {
-        progress.visibility = View.GONE
-        textViewDetails.visibility = View.VISIBLE
+        binding.progress.visibility = View.GONE
+        binding.textViewDetails.visibility = View.VISIBLE
     }
 
     private fun setCharacter(character: MarvelCharacter) {
-        textViewDetails.text = character.description
+        binding.textViewDetails.text = character.description
     }
 
     private fun showMessage(message: String) {
@@ -66,16 +68,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSearchRemoteClicked() {
-        val id = if (characterID.text.toString().isNotEmpty()) {
-            characterID.text.toString().toInt()
+        val id = if (binding.characterID.text.toString().isNotEmpty()) {
+            binding.characterID.text.toString().toInt()
         } else {
             MINUS_ONE
         }
         viewModel.onSearchRemoteClicked(id)
     }
     private fun onSearchLocalClicked() {
-        val id = if (characterID.text.toString().isNotEmpty()) {
-            characterID.text.toString().toInt()
+        val id = if (binding.characterID.text.toString().isNotEmpty()) {
+            binding.characterID.text.toString().toInt()
         } else {
             MINUS_ONE
         }

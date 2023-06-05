@@ -12,7 +12,7 @@ open class CharacterMapperService : BaseMapperRepository<CharacterResponse, Marv
             type.description
         )
 
-    override fun transformToRepository(type: MarvelCharacter): CharacterResponse =
+    override fun transformToEntity(type: MarvelCharacter): CharacterResponse =
         CharacterResponse(
             type.id,
             type.name,

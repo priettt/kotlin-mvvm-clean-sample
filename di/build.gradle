@@ -1,15 +1,17 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.devtools.ksp'
 
 android {
-    compileSdkVersion 28
+    namespace 'com.globant.di'
+    compileSdkVersion 33
+
     defaultConfig {
-        minSdkVersion 17
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -19,10 +21,15 @@ android {
         }
     }
 
-}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 
-repositories {
-    maven { url "https://jitpack.io" }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
 }
 
 dependencies {
@@ -30,5 +37,10 @@ dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
 
-    implementation "org.koin:koin-androidx-viewmodel:2.0.0-GA"
+    def lib = rootProject.ext.generalDependencies
+    implementation lib.koin_android
+
+    // Room
+    implementation lib.room_runtime
+    ksp lib.room_compiler
 }

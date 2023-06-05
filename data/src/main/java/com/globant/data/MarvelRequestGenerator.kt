@@ -1,38 +1,38 @@
 package com.globant.data
 
+import android.content.Context
 import android.util.Log
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import io.realm.internal.SyncObjectServerFacade.getApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val PRIVATE_API_KEY_ARG = "hash"
-private const val PRIVATE_API_KEY_ARG_VALUE = "b9baa830257d91dacc32db89d34d1f09"
-private const val PUBLIC_API_KEY_ARG = "apikey"
-private const val PUBLIC_API_KEY_ARG_VALUE = "3e207d05ea54389185beb3caa92ffc66"
-private const val MARVEL_BASE_URL = "http://gateway.marvel.com/public/"
-private const val TS = "ts"
-private const val TS_VALUE = "1"
-private const val MAX_TRYOUTS = 3
-private const val INIT_TRYOUT = 1
+class MarvelRequestGenerator(context: Context) {
 
-class MarvelRequestGenerator {
-
-    val context = getApplicationContext()
+    companion object {
+        private const val PRIVATE_API_KEY_ARG = "hash"
+        private const val PRIVATE_API_KEY_ARG_VALUE = "b9baa830257d91dacc32db89d34d1f09"
+        private const val PUBLIC_API_KEY_ARG = "apikey"
+        private const val PUBLIC_API_KEY_ARG_VALUE = "3e207d05ea54389185beb3caa92ffc66"
+        private const val MARVEL_BASE_URL = "http://gateway.marvel.com/public/"
+        private const val TS = "ts"
+        private const val TS_VALUE = "1"
+        private const val MAX_TRYOUTS = 3
+        private const val INIT_TRYOUT = 1
+    }
 
     private val httpClient = OkHttpClient.Builder()
             .addInterceptor(
                     HttpLoggingInterceptor().apply {
-                        this.level = HttpLoggingInterceptor.Level.BODY
+                        this.level = BODY
                     }
             )
-            .addInterceptor(ChuckerInterceptor(context))
+            .addInterceptor(ChuckerInterceptor.Builder(context).build())
             .addInterceptor { chain ->
                 val defaultRequest = chain.request()
-
-                val defaultHttpUrl = defaultRequest.url()
+                val defaultHttpUrl = defaultRequest.url
 
                 val httpUrl = defaultHttpUrl.newBuilder()
                         .addQueryParameter(PUBLIC_API_KEY_ARG, PRIVATE_API_KEY_ARG_VALUE)
@@ -40,8 +40,7 @@ class MarvelRequestGenerator {
                         .addQueryParameter(TS, TS_VALUE)
                         .build()
 
-                val requestBuilder = defaultRequest.newBuilder()
-                        .url(httpUrl)
+                val requestBuilder = defaultRequest.newBuilder().url(httpUrl)
 
                 chain.proceed(requestBuilder.build())
             }
@@ -70,4 +69,5 @@ class MarvelRequestGenerator {
         val retrofit = builder.client(httpClient.build()).build()
         return retrofit.create(serviceClass)
     }
+
 }

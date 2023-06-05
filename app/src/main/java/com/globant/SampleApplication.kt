@@ -2,16 +2,18 @@ package com.globant
 
 import android.app.Application
 import com.globant.di.viewModelsModule
-import io.realm.Realm
-import org.koin.core.context.startKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.context.loadKoinModules
 
-class SampleApplication: Application() {
+class SampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Realm.init(this)
 
         startKoin {
-            modules(listOf(repositoriesModule, viewModelsModule, useCasesModule))
+            androidContext(this@SampleApplication)
+            injectFeature()
+            loadKoinModules(viewModelsModule)
         }
     }
 }

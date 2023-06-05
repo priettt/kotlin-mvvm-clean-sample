@@ -1,41 +1,39 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
+apply plugin: 'com.google.devtools.ksp'
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "io.realm:realm-gradle-plugin:5.11.0"
-    }
-}
-
-realm {
-    syncEnabled = true;
-}
 android {
-    compileSdkVersion 28
+    namespace 'com.globant.myapplication'
+    compileSdkVersion 33
+
     defaultConfig {
         applicationId "com.globant.myapplication"
-        minSdkVersion 17
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
 
-repositories {
-    maven { url "https://jitpack.io" }
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
@@ -51,7 +49,7 @@ dependencies {
     implementation lib.appcompat
     implementation lib.coreKtx
     implementation lib.constraintlayout
-    implementation lib.viewmodel
+    implementation lib.koin_android
 
     testImplementation lib.junit_version
     androidTestImplementation lib.test_runner_version

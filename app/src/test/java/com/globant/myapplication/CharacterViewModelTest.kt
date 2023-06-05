@@ -3,15 +3,19 @@ package com.globant.myapplication
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import com.globant.di.useCasesModule
 import com.globant.domain.entities.MarvelCharacter
 import com.globant.domain.usecases.GetCharacterByIdUseCase
 import com.globant.domain.utils.Result
+import com.globant.useCaseModule
 import com.globant.utils.Data
 import com.globant.utils.Status
 import com.globant.viewmodels.CharacterViewModel
 import com.google.common.truth.Truth
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -20,32 +24,30 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.test.AutoCloseKoinTest
-import org.koin.test.inject
+import org.koin.java.KoinJavaComponent.inject
+import org.koin.test.KoinTest
 import org.koin.test.mock.declareMock
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import java.lang.Exception
 import org.mockito.Mockito.`when` as whenever
 
 private const val VALID_ID = 1017100
 private const val INVALID_ID = -1
 
-class CharacterViewModelTest : AutoCloseKoinTest() {
+class CharacterViewModelTest : KoinTest {
 
-    @ObsoleteCoroutinesApi
     private var mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    lateinit var subject: CharacterViewModel
+    private lateinit var subject: CharacterViewModel
     @Mock lateinit var marvelCharacterValidResult: Result.Success<MarvelCharacter>
     @Mock lateinit var marvelCharacterInvalidResult: Result.Failure
     @Mock lateinit var marvelCharacter: MarvelCharacter
     @Mock lateinit var exception: Exception
 
-    private val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject()
+    private val getCharacterByIdUseCase: GetCharacterByIdUseCase by inject(GetCharacterByIdUseCase::class.java)
 
     @ExperimentalCoroutinesApi
     @ObsoleteCoroutinesApi
@@ -53,11 +55,11 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
     fun setup() {
         Dispatchers.setMain(mainThreadSurrogate)
         startKoin {
-            modules(listOf(useCasesModule))
+            modules(listOf(useCaseModule))
         }
 
         declareMock<GetCharacterByIdUseCase>()
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
         subject = CharacterViewModel(getCharacterByIdUseCase)
     }
 
@@ -127,7 +129,7 @@ class CharacterViewModelTest : AutoCloseKoinTest() {
 
     class TestObserver<T> : Observer<T> {
         val observedValues = mutableListOf<T?>()
-        override fun onChanged(value: T?) {
+        override fun onChanged(value: T) {
             observedValues.add(value)
         }
     }

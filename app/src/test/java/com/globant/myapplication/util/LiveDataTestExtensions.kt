@@ -38,7 +38,7 @@ class LiveDataValueCapture<T> {
 
     fun addValue(value: T?) {
         _values += value
-        channel.offer(value)
+        channel.trySend(value)
     }
 
     suspend fun assertSendsValues(timeout: Long, vararg expected: T?) {
@@ -64,7 +64,7 @@ class LiveDataValueCapture<T> {
  * Extension function to capture all values that are emitted to a LiveData<T> during the execution of
  * `captureBlock`.
  *
- * @param captureBlock a lambda that will
+ * @param block a lambda that will
  */
 inline fun <T> LiveData<T>.captureValues(block: LiveDataValueCapture<T>.() -> Unit) {
     val capture = LiveDataValueCapture<T>()
@@ -81,7 +81,7 @@ inline fun <T> LiveData<T>.captureValues(block: LiveDataValueCapture<T>.() -> Un
  */
 fun <T> LiveData<T>.getValueForTest(): T? {
     var value: T? = null
-    var observer = Observer<T> {
+    val observer = Observer<T> {
         value = it
     }
     observeForever(observer)
